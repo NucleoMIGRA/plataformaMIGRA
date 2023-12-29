@@ -1,0 +1,675 @@
+***********************PROYECTO PLATAFORMA MIGRA********************************
+***********************PRIMERA PARTE, CREACIÓN PANEL****************************
+* DETALLAR LOS PASOS A SEGUIR PARA CADA BASE
+*1 ABRIR CADA BASE E IDENTIFICAR LAS VARIABLES DE INTERES
+*a) Indicador si es migrante (o nacido fuera de Chile)
+*b) Educación (indicador si tiene educ. superior)
+*c) Sexo
+*d) Edad
+*e) # habitantes en el hogar, m2 del hogar
+*f) Si participa del mercado laboral, ctas horas trabaja
+*g) Salario (ingresos del trabajo), winsorizar extremos 5% 95%
+*h) Tipo de contrato.
+*i) Region
+*2 RENONMBRAR EN CADA BASE LAS VARIABLES PARA PODER HACER APPEND Y GENERAR PANEL
+
+set scheme modern,perm 
+
+
+
+**************************2009**************************************************
+
+clear all 
+set more off
+
+use "D:\plataforma_migra\casen_raw\casen_2009.dta", clear
+
+keep t8cod educ sexo edad  numper v5 v6 o16 yopraj ytrabaj o26 region comuna zona hacinami1 expr_p expc_p o25 esc
+*revisar si agregar factores de expansion (expr_p expp_p expc_p expr expp expc) 
+
+**************************EN ESPECIFICO PARA ESTE AÑO DEJAMOS*******************
+
+*a) Indicador si es migrante (o nacido fuera de Chile) (t8cod)
+*b) Educación (indicador si tiene educ. superior) (educ)
+*c) Sexo (sexo)
+*d) Edad (edad)
+*e) # habitantes en el hogar, (numper)
+*f)m2 del hogar (v5 para sitio v6 para hogar)
+*g) Si participa del mercado laboral, ctas horas trabaja (o16)
+*h) Salario (ingresos del trabajo), winsorizar extremos 5% 95% (yopraj para actividad principal, ytrabaj ingreso del trabajo)
+*i) Tipo de contrato.(o26, deje solo indefinido y plazo fijo)
+*j) region
+*k) comuna
+*l) factor de expansion (expr_p expp_p expc_p expr expp expc)
+*m) zona (urbano o rural 1 si urbano)
+*n) hacinamiento (hacinami 1)
+
+*********************GENERAR BINARIAS*******************************************
+*PARA EXTRANJERO
+destring t8cod, replace
+replace t8cod=0 if t8cod==.
+gen extranjero =.
+replace extranjero=1 if t8cod>16000
+replace extranjero=0 if t8cod<=16000
+drop if t8cod==99999
+*PARA MUJERES
+gen mujer=.
+replace mujer=1 if sexo ==2
+replace mujer=0 if sexo ==1
+*PARA EDUCACION SUPERIOR
+gen educ_sup =.
+replace educ_sup=1 if educ==9
+replace educ_sup=0 if educ<9
+*PARA CONTRATO INDEFINIDO
+gen indef=.
+replace indef=1 if o26==1
+replace indef=0 if o26==2
+*PARA CONTRATO 
+gen contrato=.
+replace contrato=1 if o25==1 | o25==2
+replace contrato=0 if o25==3 | o25==4
+
+*PARA URBANO
+gen urbano=.
+replace urbano=1 if zona==1
+replace urbano=0 if zona==2
+
+*como horas_trabajo genera problemas, renonmbrare a los que no saben(999), como missing values
+
+gen horas_trabajo=.
+replace horas_trabajo= o16 if o16<999
+
+*******************RENONMBRAR VARIABLES PARA HACER APPEND***********************
+rename v5 sitiom2
+rename v6 casam2
+rename yopraj ing_act_prin
+rename ytrabaj ing_del_trabajo
+rename hacinami1 hacinamiento
+rename expr_p expr
+rename expc_p expc 
+
+drop sexo t8cod o26 o16 o25
+
+gen año=2009
+gen inflacion=1.772
+
+
+******************GUARDAR BASE**************************************************
+
+ save "D:\plataforma_migra\casen_panel\casen_2009_clean.dta", replace
+
+**************************2011**************************************************
+
+clear all 
+set more off
+
+use "D:\plataforma_migra\casen_raw\casen_2011.dta", clear
+
+keep h11 educ sexo edad numper v2frent v2fo v5m o10 yopraj ytrabaj o16 region comuna zona hacinamiento expr_full expc_full o17 esc
+*REVISAR SI AGREGAR FACTORES DE EXPANSION (expr_p expp_p expc_p expr expp expc )
+*SE DEBE AGREGAR v2frent v2fo, QUE ES METROS DE FONDO Y FRENTE DE LOS TERRENOS
+*DROPEAR BINACIONALIDAD
+drop if h11==2
+*****************************CREAR BINARIAS*******************************************
+*PARA EXTRANJERO
+gen extranjero =.
+replace extranjero=1 if h11==3
+replace extranjero=0 if h11==1
+*PARA MUJERES 
+gen mujer=.
+replace mujer=1 if sexo ==2
+replace mujer=0 if sexo ==1
+*PARA EDUCACION SUPERIOR
+gen educ_sup =.
+replace educ_sup=1 if educ==8
+replace educ_sup=0 if educ<8
+*PARA CONTRATO INDEFINIDO
+gen indef=.
+replace indef=1 if o16==1
+replace indef=0 if o16==2
+*PARA URBANO
+gen urbano=.
+replace urbano=1 if zona==1
+replace urbano=0 if zona==2
+*PARA sitiom2 DEBEMOS CREARLA
+gen sitiom2=v2frent*v2fo
+*PARA CONTRATO 
+gen contrato=.
+replace contrato=1 if o17==1 | o17==2
+replace contrato=0 if o17==3 | o17==4
+*******************RENONMBRAR VARIABLES PARA HACER APPEND y dropear***********************
+rename v5m casam2
+rename o10 horas_trabajo
+rename yopraj ing_act_prin
+rename ytrabaj ing_del_trabajo
+rename expr_full expr
+rename expc_full expc
+
+
+drop v2frent v2fo h11 sexo o16 o17
+gen año=2011
+gen inflacion=1.648
+******************GUARDAR BASE**************************************************
+
+ save "D:\plataforma_migra\casen_panel\casen_2011_clean.dta", replace
+ 
+**************************2013**************************************************
+clear
+set more off
+
+use "D:\plataforma_migra\casen_raw\casen_2013.dta", clear
+
+keep r1a educ sexo edad numper v11m o10 yoprcor ytrabajocor o16 region comuna zona hacinamiento expr expc o17 esc
+*REVISAR SI DEJAMOS FACTORES DE EXPANSION (expr expc expr_r20)
+**no hay data para metros cuadrados del sitio
+*DROPEAMOS BINACIONALIDAD
+drop if r1a==2
+*****************************CREAR BINARIAS*******************************************
+*PARA EXTRANJERO
+gen extranjero =.
+replace extranjero=1 if r1a==3
+replace extranjero=0 if r1a==1
+*PARA MUJERES 
+gen mujer=.
+replace mujer=1 if sexo ==2
+replace mujer=0 if sexo ==1
+*PARA EDUCACION SUPERIOR
+***DEJE POSGRDO COMPLETA, INCOMPLETO, PROFESIONAL COMPLETO Y TECNICO COMPLETO.
+gen educ_sup =.
+replace educ_sup=1 if educ==8|educ==10|educ==11|educ==12
+replace educ_sup=0 if educ<8| educ==9 | educ==99
+*PARA CONTRATO INDEFINIDO
+gen indef=.
+replace indef=1 if o16==1
+replace indef=0 if o16==2
+*PARA URBANO
+gen urbano=.
+replace urbano=1 if zona==1
+replace urbano=0 if zona==2
+*PARA CONTRATO 
+gen contrato=.
+replace contrato=1 if o17==1 | o17==2
+replace contrato=0 if o17==3 | o17==4 
+*******************RENONMBRAR VARIABLES PARA HACER APPEND y dropear***********************
+rename v11m casam2
+rename o10 horas_trabajo
+rename yoprcor ing_act_prin
+rename ytrabajocor ing_del_trabajo
+
+drop r1a sexo o16 o17
+gen año=2013
+gen inflacion=1.576
+******************GUARDAR BASE**************************************************
+
+save "D:\plataforma_migra\casen_panel\casen_2013_clean.dta", replace
+
+**************************2015**************************************************
+clear
+set more off
+
+use "D:\plataforma_migra\casen_raw\casen_2015.dta", clear
+keep r1a educ sexo edad numper v11 o10 yoprcor ytrabajocor o16 region comuna zona hacinamiento  expr expc o17 esc
+*REVISAR SI DEJAMOS FACTORES DE EXPANSION ( expr expc expr_div)
+**no hay data para metros cuadrados del sitio
+*DROPEAMOS BINACIONALIDAD
+drop if r1a==2
+*****************************CREAR BINARIAS*******************************************
+*PARA EXTRANJERO
+gen extranjero =.
+replace extranjero=1 if r1a==3
+replace extranjero=0 if r1a==1
+*PARA MUJERES 
+gen mujer=.
+replace mujer=1 if sexo ==2
+replace mujer=0 if sexo ==1
+*PARA EDUCACION SUPERIOR
+***DEJE POSGRDO COMPLETA, INCOMPLETO, PROFESIONAL COMPLETO Y TECNICO COMPLETO.
+gen educ_sup =.
+replace educ_sup=1 if educ==8|educ==10|educ==11|educ==12
+replace educ_sup=0 if educ<8| educ==9 | educ==99
+*PARA CONTRATO INDEFINIDO
+gen indef=.
+replace indef=1 if o16==1
+replace indef=0 if o16==2
+*PARA URBANO
+gen urbano=.
+replace urbano=1 if zona==1
+replace urbano=0 if zona==2
+gen contrato=.
+replace contrato=1 if o17==1 | o17==2
+replace contrato=0 if o17==3 | o17==4
+*******************RENONMBRAR VARIABLES PARA HACER APPEND y dropear***********************
+rename v11 casam2
+rename o10 horas_trabajo
+rename yoprcor ing_act_prin
+rename ytrabajocor ing_del_trabajo
+
+drop r1a sexo o16 o17
+gen año=2015
+gen inflacion=1.443
+
+
+******************GUARDAR BASE**************************************************
+
+save "D:\plataforma_migra\casen_panel\casen_2015_clean.dta", replace
+
+**************************2017**************************************************
+clear
+set more off
+
+use "D:\plataforma_migra\casen_raw\casen_2017.dta", clear
+keep r1a educ sexo edad numper v12mt o10 yoprcor ytrabajocor o16 region comuna zona hacinamiento  expr expc o17 esc
+*REVISAR SI DEJAMOS FACTORES DE EXPANSION (expr expc expr_div)
+**no hay data para metros cuadrados del sitio
+*DROPEAMOS BINACIONALIDAD
+*****************************CREAR BINARIAS*******************************************
+*PARA EXTRANJERO
+gen extranjero =.
+replace extranjero=1 if r1a==3
+replace extranjero=0 if r1a==1
+*PARA MUJERES 
+gen mujer=.
+replace mujer=1 if sexo ==2
+replace mujer=0 if sexo ==1
+*PARA EDUCACION SUPERIOR
+***DEJE POSGRDO COMPLETA, INCOMPLETO, PROFESIONAL COMPLETO Y TECNICO COMPLETO.
+gen educ_sup =.
+replace educ_sup=1 if educ==8|educ==10|educ==11|educ==12
+replace educ_sup=0 if educ<8| educ==9 | educ==99
+*PARA CONTRATO INDEFINIDO
+gen indef=.
+replace indef=1 if o16==1
+replace indef=0 if o16==2
+*PARA URBANO
+gen urbano=.
+replace urbano=1 if zona==1
+replace urbano=0 if zona==2
+gen contrato=.
+replace contrato=1 if o17==1 | o17==2
+replace contrato=0 if o17==3 | o17==4
+*******************RENONMBRAR VARIABLES PARA HACER APPEND y dropear*************
+rename v12mt casam2
+rename o10 horas_trabajo
+rename yoprcor ing_act_prin
+rename ytrabajocor ing_del_trabajo
+
+drop r1a sexo o16 o17
+
+gen año=2017
+gen inflacion=1.374
+
+******************GUARDAR BASE**************************************************
+
+save "D:\plataforma_migra\casen_panel\casen_2017_clean.dta", replace
+
+**************************2020**************************************************
+clear
+set more off
+
+use "D:\plataforma_migra\casen_raw\casen_2020.dta", clear
+
+
+keep r2 educ sexo edad numper y2_hrs yoprcor ytrabajocor region comuna zona  expr expc esc
+*r2 MEJOR PROXY DE EXTRANJERO 
+*NO DATOS DE METROS CUADRADOS DE CASA 
+*HORAS DE TRABAJO y2_hrs, son las pactadas con el empleador
+*NO HAY DATOS DE TIPO DE CONTRATO
+*****************************CREAR BINARIAS*******************************************
+*PARA EXTRANJERO
+gen extranjero =.
+replace extranjero=1 if r2==4
+replace extranjero=0 if r2!=4
+*PARA MUJERES 
+gen mujer=.
+replace mujer=1 if sexo ==2
+replace mujer=0 if sexo ==1
+*PARA EDUCACION SUPERIOR
+***DEJE POSGRDO COMPLETA, INCOMPLETO, PROFESIONAL COMPLETO Y TECNICO COMPLETO.
+gen educ_sup =.
+replace educ_sup=1 if educ==8|educ==10|educ==11|educ==12
+replace educ_sup=0 if educ<8| educ==9 | educ==99
+*PARA URBANO
+gen urbano=.
+replace urbano=1 if zona==1
+replace urbano=0 if zona==2
+*******************RENONMBRAR VARIABLES PARA HACER APPEND y dropear*************
+rename y2_hrs horas_trabajo
+rename yoprcor ing_act_prin
+rename ytrabajocor ing_del_trabajo
+
+drop r2 sexo 
+
+gen año=2020
+gen inflacion=1.263
+
+
+
+******************GUARDAR BASE**************************************************
+
+save "D:\plataforma_migra\casen_panel\casen_2020_clean.dta", replace
+
+**************************2022**************************************************
+clear
+set more off
+
+use "D:\plataforma_migra\casen_raw\casen_2022.dta", clear
+
+keep r1a educ sexo edad numper v12mt o10 yoprcor ytrabajocor o18 region  ind_hacina  expr contrato esc
+*NO HAY DATOS PARA ZONA
+
+*****************************CREAR BINARIAS*******************************************
+*PARA EXTRANJERO
+gen extranjero =.
+replace extranjero=1 if r1a==3
+replace extranjero=0 if r1a!=3
+*PARA MUJERES 
+gen mujer=.
+replace mujer=1 if sexo ==2
+replace mujer=0 if sexo ==1
+*PARA EDUCACION SUPERIOR
+***DEJE POSGRDO COMPLETA, INCOMPLETO, PROFESIONAL COMPLETO Y TECNICO COMPLETO.
+gen educ_sup =.
+replace educ_sup=1 if educ==8|educ==10|educ==11|educ==12
+replace educ_sup=0 if educ<8| educ==9 | educ==99
+*PARA CONTRATO INDEFINIDO
+gen indef=.
+replace indef=1 if o18==1
+replace indef=0 if o18==2
+*PARA CONTRATO 
+rename contrato o17
+gen contrato=.
+replace contrato=1 if o17==1
+replace contrato=0 if o17==0
+
+*******************RENONMBRAR VARIABLES PARA HACER APPEND y dropear*************
+rename o10 horas_trabajo
+rename v12mt casam2
+rename yoprcor ing_act_prin
+rename ytrabajocor ing_del_trabajo
+rename ind_hacina hacinamiento
+drop r1a sexo o18
+
+gen año=2022
+gen inflacion=1.045
+
+******************GUARDAR BASE**************************************************
+
+save "D:\plataforma_migra\casen_panel\casen_2022_clean.dta", replace
+
+
+
+********************************************************************************
+******************************APPEND DEL PANEL**********************************
+********************************************************************************
+
+
+
+use "D:\plataforma_migra\casen_panel\casen_2009_clean", clear
+gen year=2008
+forval i = 2008/2022 {
+    capture confirm file "D:\plataforma_migra\casen_panel\casen_`i'_clean.dta"
+    if !_rc {
+        append using "D:\plataforma_migra\casen_panel\casen_`i'_clean"
+        replace year = `i' if missing(year)
+    }
+}
+drop year
+save "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", replace
+
+
+
+
+
+
+****************************SEGUNDA PARTE***************************************
+********************************************************************************
+******************************GRAFICOS******************************************
+********************************************************************************
+
+
+*****************************GRAFICO 1******************************************
+************: migrantes por año (dos series de tiempo: hombres/mujeres)*********
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+
+drop if mujer==.
+
+gen mujer_ext=.
+replace mujer_ext=1 if mujer==1 & extranjero==1
+
+gen hombre_ext=.
+replace hombre_ext=1 if mujer==0 & extranjero==1 
+
+
+
+collapse (sum) mujer_ext hombre_ext, by(año)
+
+binscatter2 (hombre_ext) (mujer_ext año),  graphregion(fcolor(white) lcolor(white) ///
+ifcolor(white) ilcolor(white)) xtitle("Año Encuesta CASEN") ytitle("Cantidad de Migrantes")  linetype(connect) title("Cantidad de Migrantes por Género en el Tiempo") ///
+name(fig4a, replace) legend(label(1 "Hombres") label(2 "Mujeres")) ///
+legend(pos(10) ring(0) col(1) order(1 2) ) xlabel(2009 2011 2013 2015 2017 2020 2022)
+
+*****************************GRAFICO 2******************************************
+**********% de migrantes y nacionales con educ. superior por año****************
+
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+
+drop if mujer==.
+
+gen ext_sup=.
+replace ext_sup=1 if educ_sup==1 & extranjero==1
+replace ext_sup=0 if educ_sup==0 & extranjero==1
+
+gen nacional_sup =.
+replace nacional_sup=1 if educ_sup==1 & extranjero==0 
+replace nacional_sup=0 if educ_sup==0 & extranjero==0
+
+collapse (mean) nacional_sup ext_sup, by(año)
+
+ 
+ graph bar  nacional_sup ext_sup, over(año)  legend(label(2 "Migrantes") label(1 "Nativos")) ///
+ ytitle("Porcentaje Con Educación Superior") b1title("Año Encuesta CASEN") ///
+ title("Porcentaje de Personas con Educación Superior por Origen") ///
+ legend(pos(10) ring(0) col(1) order(1 2) )
+
+*****************************GRAFICO 3******************************************
+****% de hacinados medio, critico, no hacinado entre migrantes y nacionales ****
+
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+
+drop if mujer==.
+drop if hacinamiento==4
+drop if hacinamiento==9
+drop if hacinamiento==-88
+drop if hacinamiento==1
+
+
+*****************************************************************************
+
+label define extranjero_lbl 1 "Extranjero" 0 "Nativo"
+
+label values extranjero extranjero_lbl
+
+
+graph bar (count), over(hacinamiento) over(extranjero, label(angle(45))) over(año) asyvars stack percentages ///
+ ytitle("Porcentaje") b1title("Año Encuesta CASEN") ///
+ title("Porcentaje de Nivel de Hacinamiento por Origen") ///
+ legend(label(1 "Medio Hacinamiento") label(2 "Hacinamiento Crítico") pos(6) ring(1) col(1) order(1 2 3) )
+
+*****************************GRAFICO 4******************************************
+****twoway connected # de hras trabajadas por año (dos series de tiempo: nacionales y migrantes) ****
+
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+gen horas_ext=.
+replace horas_ext=horas_trabajo if extranjero==1
+gen horas_nac=.
+replace horas_nac=horas_trabajo if extranjero==0
+
+collapse (mean) horas_trabajo horas_ext horas_nac , by(año)
+drop if año==2020
+
+binscatter2 (horas_ext) (horas_nac año),  graphregion(fcolor(white) lcolor(white) ///
+ifcolor(white) ilcolor(white)) xtitle("Año Encuesta CASEN") ytitle("Horas Promedio")  linetype(connect) title("Horas Promedio de Trabajo por Origen") ///
+name(fig4a, replace) legend(label(1 "Extranjeros") label(2 "Nativos")) ///
+legend(pos(3) ring(0) col(1) order(1 2) ) xlabel(2009 2011 2013 2015 2017  2022)
+*****************************GRAFICO 5******************************************
+****twoway connected % contrato  (dos series de tiempo: nacionales y migrantes)****
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+
+gen contra_ext=.
+replace contra_ext=contrato if extranjero==1
+gen contra_nac=.
+replace contra_nac=contrato if extranjero==0
+
+collapse (mean) contra_ext  contra_nac , by(año)
+drop if año==2020
+
+binscatter2 (contra_ext) (contra_nac año), graphregion(fcolor(white) lcolor(white) ///
+ifcolor(white) ilcolor(white)) xtitle("Año Encuesta CASEN") ytitle("Porcentaje")  linetype(connect) title("Porcentaje de Personas con Contrato ") ///
+name(fig4a, replace) legend(label(1 "Extranjeros") label(2 "Nativos")) ///
+legend(pos(3) ring(0) col(1) order(1 2) ) xlabel(2009 2011 2013 2015 2017  2022)
+*****************************GRAFICO 6******************************************
+****twoway connected % ingreso por hora(salario) (dos series de tiempo: nacionales y migrantes)****
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+drop if ing_del_trabajo>5000000
+gen salario=(ing_act_prin*inflacion)/(4*horas_trabajo)
+
+gen salario_ext=.
+replace salario_ext=salario if extranjero==1
+gen salario_nac=.
+replace salario_nac=salario if extranjero==0
+
+collapse (mean) salario_ext  salario_nac[w=expr] , by(año)
+drop if año==2020
+
+binscatter2 (salario_ext) (salario_nac año), graphregion(fcolor(white) lcolor(white) ///
+ifcolor(white) ilcolor(white)) xtitle("Año Encuesta CASEN") ytitle("Salario Promedio")  linetype(connect) title("Salario Promedio por Origen") ///
+name(fig4a, replace) legend(label(1 "Extranjeros") label(2 "Nativos")) ///
+legend(pos(3) ring(0) col(1) order(1 2) ) xlabel(2009 2011 2013 2015 2017  2022) 
+*****************************GRAFICO 8******************************************
+****8. PIRAMIDE DEMOGRAFICA****
+*8.1 PARA TODO CHILE
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+keep if año==2022
+replace edad=90 if edad>90
+gen grupos_edad=5*int(edad/5)
+label var grupos_edad "Edad (tramos de 5 años)"
+label define rangos_g  0 "0-5" 5 "5-10" 10 "10-15" 15 "15-20" 20 "20-25" 25 "25-30" ///
+30 "30-35" 35 "35-40" 40 "40-45" 45 "45-50" 50 "50-55" 55 "55-60" 60 "60-65" ///
+65 "65-70" 70 "70-75" 75 "75-80" 80 "80-85" 85 "85-90" 90 "90 +"
+label values grupos_edad rangos_g
+gen pobtot=1
+egen totpob=sum(pobtot)
+egen pop5=sum(pobtot), by(grupos_edad mujer)
+
+gen cero=0
+
+gen Hombres=-100*pop5/totpob if mujer==0
+gen Mujeres=100*pop5/totpob if mujer==1
+
+
+
+twoway ///
+(bar Hombres grupos_edad [fweight=expc] , horizontal barwidth(5) ) ///
+(bar Mujeres grupos_edad [fweight=expc] , horizontal barwidth(5) )  ///
+(scatter grupos_edad cero, msymbol(i) mlabel(grupos_edad) mlabstyle(p1) mlabcolor(black) mlabsize(*.5) xlabel(-4 "4" -2 "2" 0 "0" 2 "2" 4 "4") legend(order(1 "Hombres" 2 "Mujeres"))), ///
+title("Pirámide Poblacional, Chile 2022") ///
+xtitle("Porcentaje de poblacion") 
+
+****8. PIRAMIDE DEMOGRAFICA****
+*8.2 PARA EXTRANJEROS
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+keep if año==2022
+keep if extranjero==1
+replace edad=90 if edad>90
+gen grupos_edad=5*int(edad/5)
+label var grupos_edad "Edad (tramos de 5 años)"
+label define rangos_g  0 "0-5" 5 "5-10" 10 "10-15" 15 "15-20" 20 "20-25" 25 "25-30" ///
+30 "30-35" 35 "35-40" 40 "40-45" 45 "45-50" 50 "50-55" 55 "55-60" 60 "60-65" ///
+65 "65-70" 70 "70-75" 75 "75-80" 80 "80-85" 85 "85-90" 90 "90 +"
+label values grupos_edad rangos_g
+gen pobtot=1
+egen totpob=sum(pobtot)
+egen pop5=sum(pobtot), by(grupos_edad mujer)
+
+gen cero=0
+
+gen Hombres=-100*pop5/totpob if mujer==0
+gen Mujeres=100*pop5/totpob if mujer==1
+
+
+
+twoway ///
+(bar Hombres grupos_edad [fweight=expc] , horizontal barwidth(5) ) ///
+(bar Mujeres grupos_edad [fweight=expc] , horizontal barwidth(5) )  ///
+(scatter grupos_edad cero, msymbol(i) mlabel(grupos_edad) mlabstyle(p1) mlabcolor(black) mlabsize(*.5) xlabel(-8 "8" -6"6"  -4 "4" -2 "2" 0 "0" 2 "2" 4 "4" 6 "6" 8 "8") legend(order(1 "Hombres" 2 "Mujeres"))), ///
+title("Pirámide Poblacional de Extranjeros, Chile 2022") ///
+xtitle("Porcentaje de poblacion") saving(extranjero)
+
+
+****8. PIRAMIDE DEMOGRAFICA****
+*8.2 PARA NATIVOS
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+keep if año==2022
+keep if extranjero==0
+replace edad=90 if edad>90
+gen grupos_edad=5*int(edad/5)
+label var grupos_edad "Edad (tramos de 5 años)"
+label define rangos_g  0 "0-5" 5 "5-10" 10 "10-15" 15 "15-20" 20 "20-25" 25 "25-30" ///
+30 "30-35" 35 "35-40" 40 "40-45" 45 "45-50" 50 "50-55" 55 "55-60" 60 "60-65" ///
+65 "65-70" 70 "70-75" 75 "75-80" 80 "80-85" 85 "85-90" 90 "90 +"
+label values grupos_edad rangos_g
+gen pobtot=1
+egen totpob=sum(pobtot)
+egen pop5=sum(pobtot), by(grupos_edad mujer)
+
+gen cero=0
+
+gen Hombres=-100*pop5/totpob if mujer==0
+gen Mujeres=100*pop5/totpob if mujer==1
+
+
+
+twoway ///
+(bar Hombres grupos_edad [fweight=expc] , horizontal barwidth(5) ) ///
+(bar Mujeres grupos_edad [fweight=expc] , horizontal barwidth(5) )  ///
+(scatter grupos_edad cero, msymbol(i) mlabel(grupos_edad) mlabstyle(p1) mlabcolor(black) mlabsize(*.5) xlabel(-8 "8" -6"6"  -4 "4" -2 "2" 0 "0" 2 "2" 4 "4" 6 "6" 8 "8") legend(order(1 "Hombres" 2 "Mujeres"))), ///
+title("Pirámide Poblacional de Nativos, Chile 2022") ///
+xtitle("Porcentaje de poblacion") saving(nativo)
+
+gr combine extranjero.gph nativo.gph
