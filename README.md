@@ -32,8 +32,63 @@ graph export "D:\plataforma_migra\fig_casen\fig_1.png", as(png)  replace
 
 ### Figura 2: Educación Superior.
 ![Figura 2](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_2.png)
+```
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+
+drop if mujer==.
+
+gen ext_sup=.
+replace ext_sup=1 if educ_sup==1 & extranjero==1
+replace ext_sup=0 if educ_sup==0 & extranjero==1
+
+gen nacional_sup =.
+replace nacional_sup=1 if educ_sup==1 & extranjero==0 
+replace nacional_sup=0 if educ_sup==0 & extranjero==0
+
+collapse (mean) nacional_sup ext_sup, by(año)
+
+ 
+ graph bar  nacional_sup ext_sup, over(año)  legend(label(2 "Migrantes") label(1 "Nativos")) ///
+ ytitle("Porcentaje Con Educación Superior") b1title("Año Encuesta CASEN") ///
+ title("Porcentaje de Personas con Educación Superior por Origen") ///
+ legend(pos(10) ring(0) col(1) order(1 2) )
+ 
+graph export "D:\plataforma_migra\fig_casen\fig_2.png", as(png)  replace
+```
 ### Figura 3: Hacinamiento.
 ![Figura 3](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_3.png)
+```
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+
+drop if mujer==.
+drop if hacinamiento==4
+drop if hacinamiento==9
+drop if hacinamiento==-88
+drop if hacinamiento==1
+
+
+*****************************************************************************
+
+label define extranjero_lbl 1 "Extranjero" 0 "Nativo"
+
+label values extranjero extranjero_lbl
+
+
+graph bar (count), over(hacinamiento) over(extranjero, label(angle(45))) over(año) asyvars stack percentages ///
+ ytitle("Porcentaje") b1title("Año Encuesta CASEN") ///
+ title("Porcentaje de Nivel de Hacinamiento por Origen") ///
+ legend(label(1 "Medio Hacinamiento") label(2 "Hacinamiento Crítico") pos(6) ring(1) col(1) order(1 2 3) )
+ 
+ graph export "D:\plataforma_migra\fig_casen\fig_3.png", as(png)  replace
+```
 ### Figura 4: Horas de Trabajo.
 ![Figura 4](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_4.png)
 ### Figura 5: Porcentaje de Personas Contratadas.
