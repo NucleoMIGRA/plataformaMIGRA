@@ -3,4 +3,7 @@ Repositorio con el fin de evidenciar a través de estaísticas, la situación de
 Para cumplir este objetivo, recopilamos diferentes bases de datos (CASEN, ENE, .... )
 ## CASEN
 ### Figura 1: Extranjeros en el tiempo por género.
-![Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_1.png)
+![Figura 1](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_1.png)
+### Figura 2: Educación Superior.
+![Figura 1](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_2.png)
+
