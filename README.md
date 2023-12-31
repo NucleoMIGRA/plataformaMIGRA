@@ -302,3 +302,27 @@ gr combine extranjero.gph nativo.gph
 graph export "D:\plataforma_migra\fig_casen\fig_8.png", as(png)  replace
 ```
 
+
+### Figura 8: Pirámides Poblacionales.
+![Figura 8](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_8.png)
+```
+clear
+set more off
+
+set scheme modern, perm
+use "D:\plataforma_migra\casen_panel\casen_panel_2009_2022", clear
+
+gen esc_ext=.
+replace esc_ext=esc if extranjero==1
+gen esc_nac=.
+replace esc_nac=esc if extranjero==0
+
+collapse (mean) esc_ext esc_nac , by(año)
+
+binscatter2 (esc_nac) (esc_ext año),  graphregion(fcolor(white) lcolor(white) ///
+ifcolor(white) ilcolor(white)) xtitle("Año Encuesta CASEN") ytitle("Años")  linetype(connect) title("Años Promedio de Escolaridad por Origen") ///
+name(fig9, replace) legend(label(2 "Extranjeros") label(1 "Nativos")) ///
+legend(pos(11) ring(0) col(1) order(1 2) ) xlabel(2009 2011 2013 2015 2017 2020 2022)
+graph export "D:\plataforma_migra\fig_casen\fig_9.png", as(png)  replace
+
+```
