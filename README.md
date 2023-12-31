@@ -1,5 +1,5 @@
 # Plataforma MIGRA
-Repositorio con el fin de evidenciar a través de estaísticas, la situación de migrantes o extranjeros/as, y compararlos con la situación de Nativos (Chilenos/as).
+Repositorio con el fin de evidenciar a través de estadísticas, la situación de migrantes o extranjeros/as, y compararlos con la situación de Nativos (Chilenos/as).
 Para cumplir este objetivo, recopilamos diferentes bases de datos (CASEN, ENE, .... )
 ## CASEN
 ### Figura 1: Extranjeros en el tiempo por género.
@@ -12,4 +12,10 @@ Para cumplir este objetivo, recopilamos diferentes bases de datos (CASEN, ENE, .
 ![Figura 4](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_4.png)
 ### Figura 5: Porcentaje de Personas Contratadas.
 ![Figura 5](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_5.png)
+### Figura 6: Salario.
+![Figura 6](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_6.png)
+### Figura 7: Ruralidad.
+![Figura 7](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_7.png)
+### Figura 8: Pirámides Poblacionales.
+![Figura 8](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_8.png)
 
