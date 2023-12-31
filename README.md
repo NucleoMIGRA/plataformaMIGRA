@@ -303,8 +303,8 @@ graph export "D:\plataforma_migra\fig_casen\fig_8.png", as(png)  replace
 ```
 
 
-### Figura 8: Pirámides Poblacionales.
-![Figura 8](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_8.png)
+### Figura 9: Años de Escolaridad.
+![Figura 9](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_9.png)
 ```
 clear
 set more off
