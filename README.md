@@ -43,4 +43,8 @@ Por lo evidenciado en la figura 2, podemos notar que migrantes también tienen m
 ![Figura 10](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/map_RM.png)
 <br>
 Por lo evidenciado en la figura 10, podemos notar que migrantes se concentran en las comunas céntricas de la RM.
+### Figura 11: Mapa CHile.
+![Figura 11](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/map_chile.png)
+<br>
+Por lo evidenciado en la figura 11, podemos notar que migrantes se concentran en las 3 primeras regiones del país y la RM.
 
