@@ -14,11 +14,15 @@ Migrantes cuentan con mayor porcentaje de educación superior, esto es persisten
 ### Figura 3: Hacinamiento.
 ![Figura 3](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_3.png)
 <br>
-Del universo de personas en situación de hacinamiento,
+Del universo de personas en situación de hacinamiento, migrantes se encuentran con mayor porcentaje en hacinamiento crítico.
 ### Figura 4: Horas de Trabajo.
 ![Figura 4](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_4.png)
+<br>
+En cuanto a horas de trabajo, migrantes destinan más horas de su tiempo a trabajar.
 ### Figura 5: Porcentaje de Personas Contratadas.
 ![Figura 5](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_5.png)
+<br>
+
 ### Figura 6: Salario.
 ![Figura 6](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_6.png)
 ### Figura 7: Ruralidad.
