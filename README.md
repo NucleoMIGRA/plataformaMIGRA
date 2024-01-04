@@ -4,6 +4,8 @@ Para cumplir este objetivo, recopilamos diferentes bases de datos (CASEN, ENE, .
 ## CASEN
 ### Figura 1: Extranjeros en el tiempo por género.
 ![Figura 1](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_1.png)
+
+{% comment %} 
 ```
 clear
 set more off
@@ -29,7 +31,7 @@ name(fig1a, replace) legend(label(1 "Hombres") label(2 "Mujeres")) ///
 legend(pos(10) ring(0) col(1) order(1 2) ) xlabel(2009 2011 2013 2015 2017 2020 2022)
 graph export "D:\plataforma_migra\fig_casen\fig_1.png", as(png)  replace
 ```
-
+{% endcomment %} 
 ### Figura 2: Educación Superior.
 ![Figura 2](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_2.png)
 ```
