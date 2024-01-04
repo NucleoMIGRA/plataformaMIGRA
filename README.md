@@ -4,10 +4,12 @@ Para cumplir este objetivo, recopilamos diferentes bases de datos (CASEN, ENE, .
 ## CASEN
 ### Figura 1: Extranjeros en el tiempo por género.
 ![Figura 1](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_1.png)
+(<br>)
 Es notorio que existe un aumento en la cantidad de migrantes en el tiempo, además es posible observar que mujeres migran más que hombres.
 
 ### Figura 2: Educación Superior.
 ![Figura 2](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_2.png)
+(<br>)
 Migrantes cuentan con mayor porcentaje de educación superior.
 ### Figura 3: Hacinamiento.
 ![Figura 3](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_3.png)
