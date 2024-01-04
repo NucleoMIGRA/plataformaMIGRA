@@ -18,13 +18,15 @@ Del universo de personas en situación de hacinamiento, migrantes se encuentran 
 ### Figura 4: Horas de Trabajo.
 ![Figura 4](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_4.png)
 <br>
-En cuanto a horas de trabajo, migrantes destinan más horas de su tiempo a trabajar.
+En cuanto a horas de trabajo, migrantes destinan más horas de su tiempo a trabajar desde 2013.
 ### Figura 5: Porcentaje de Personas Contratadas.
 ![Figura 5](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_5.png)
 <br>
-
+Nativos presentan mayor porcentaje de personas contratadas en el tiempo.
 ### Figura 6: Salario.
 ![Figura 6](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_6.png)
+<br>
+En cuanto a salarios, 
 ### Figura 7: Ruralidad.
 ![Figura 7](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_7.png)
 ### Figura 8: Pirámides Poblacionales.
