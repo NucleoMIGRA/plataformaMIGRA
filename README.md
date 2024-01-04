@@ -26,11 +26,12 @@ Nativos presentan mayor porcentaje de personas contratadas en el tiempo.
 ### Figura 6: Salario.
 ![Figura 6](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_6.png)
 <br>
-En cuanto a salarios, 
+En cuanto a salarios, migrantes tienen un mayor Salario hasta 2017, luego son superados por nativos.
 ### Figura 7: Ruralidad.
 ![Figura 7](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_7.png)
+Podemos observar que migrantes tienden a preferir zonas urbanas.
 ### Figura 8: Pirámides Poblacionales.
 ![Figura 8](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_8.png)
-
+Comparando ambas pirámides poblaciones, podemos notar en que los migrantes en comparación a nativos, presentan una mayor población en sectores 
 ### Figura 9: Años de Escolaridad.
 ![Figura 9](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_9.png)
