@@ -39,3 +39,8 @@ Comparando ambas pirámides poblaciones, podemos notar en que los migrantes en c
 ![Figura 9](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_9.png)
 <br>
 Por lo evidenciado en la figura 2, podemos notar que migrantes también tienen mayores años de escolaridad que nativos.
+### Figura 10: Mapa RM.
+![Figura 10](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/map_RM.png)
+<br>
+Por lo evidenciado en la figura 10, podemos notar que migrantes se concentran en las comunas céntricas de la RM.
+
