@@ -1,6 +1,5 @@
 # Plataforma MIGRA
-Repositorio con el fin de evidenciar a través de estadísticas, la situación de migrantes o extranjeros/as, y compararlos con la situación de Nativos (Chilenos/as).
-Para cumplir este objetivo, recopilamos diferentes bases de datos (CASEN, ENE, .... ). Todo el código relacionado con las figuras a continuación se encuentra disponible.
+Repositorio con el fin de evidenciar, a través de estadísticas, la situación de migrantes en Chile. Para cumplir este objetivo, recopilamos diferentes bases de datos públicas y disponibilizamos el código que utilizamos para limpiar y analizar los datos.
 ## CASEN
 ### Figura 1: Extranjeros en el tiempo por género.
 ![Figura 1](https://github.com/NucleoMIGRA/plataformaMIGRA/blob/main/Figuras/fig_1.png)
