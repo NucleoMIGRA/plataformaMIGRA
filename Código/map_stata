@@ -1,1 +1,106 @@
+***************************
+*AUTHOR: MIGRA
+*CREATION: JAN-2024
+*ACTION:MAPAS MIGRACIÓN EN CHILE
+****************************/
 
+clear all
+set more off
+set scheme modern
+
+**************************** 
+** SET PATH AND LOCALS
+**************************** 
+
+* Simon
+global data_raw "D:\plataforma_migra\casen_raw"
+global data_in  "D:\plataforma_migra\casen_panel"
+global fig "D:\plataforma_migra\maps"
+
+	
+**************************** 
+** 1. RM
+**************************** 
+
+* Load Data
+*USAMOS 2020, PORQUE CASEN 2022 NO FUE DISEÑADA PARA EVALUACION A NIVEL COMUNAL Y PROVINCIAL
+use "$data_in/casen_panel_2009_2022.dta", clear 
+xtset ,clear
+keep if año==2020
+gen nacional=.
+replace nacional=1 if extranjero==0
+gen pobtotal=1
+keep if region==13
+collapse (sum) nacional extranjero pobtotal , by(comuna)
+**MERGE CON COMUNA SHAPE
+merge 1:1 comuna using "$fig/comunas.dta"
+
+gen ratio=extranjero/pobtotal
+
+
+		grmap ratio, ///
+		clmethod(eqint) clnumber(5)  fcolor(Reds2)   ///
+		title("Ratio Inmigrantes- Población Total", size(*0.8))  ///
+		subtitle("Año 2020", size(*0.8))  ///
+		legstyle(2) legend(ring(1) position(3)) ndlabel("No Obs.")
+		graph export "D:\plataforma_migra\maps\map_RM.png", as(png) name("Graph")
+		
+
+		
+**************************** 
+** 2.1 CHILE RATIO
+**************************** 
+		
+ *Load Data
+*USAMOS 2020, PORQUE CASEN 2022 NO FUE DISEÑADA PARA EVALUACION A NIVEL COMUNAL Y PROVINCIAL
+use "$data_in/casen_panel_2009_2022.dta", clear 
+xtset ,clear
+keep if año==2020
+gen nacional=.
+replace nacional=1 if extranjero==0
+gen pobtotal=1
+rename region codregion
+collapse (sum) nacional extranjero pobtotal , by(codregion)
+**MERGE CON COMUNA SHAPE
+merge 1:1 codregion using "$fig/Regional.dta"
+
+gen ratio=extranjero/pobtotal
+
+
+		grmap ratio, ///
+		clmethod(eqint) clnumber(5)  fcolor(Reds2)   ///
+		title("Ratio Inmigrantes- Población Total", size(*0.8))  ///
+		subtitle("Año 2020", size(*0.8))  ///
+		legstyle(2) legend(ring(1) position(3)) ndlabel("No Obs.")
+		graph export "D:\plataforma_migra\maps\map_chile.png", as(png) name("Graph")
+		
+	
+**************************** 
+** 2.2 CHILE NIVELES
+**************************** 
+		
+ *Load Data
+*USAMOS 2020, PORQUE CASEN 2022 NO FUE DISEÑADA PARA EVALUACION A NIVEL COMUNAL Y PROVINCIAL
+use "$data_in/casen_panel_2009_2022.dta", clear 
+xtset ,clear
+keep if año==2020
+
+gen extranjero_exp=extranjero*expc
+rename region codregion
+collapse (sum) extranjero_exp , by(codregion)
+**MERGE CON COMUNA SHAPE
+merge 1:1 codregion using "$fig/Regional.dta"
+
+
+
+		grmap extranjero_exp, ///
+		clmethod(eqint) clnumber(5)  fcolor(Reds2)   ///
+		title("Ratio Inmigrantes- Población Total", size(*0.8))  ///
+		subtitle("Año 2020", size(*0.8))  ///
+		legstyle(2) legend(ring(1) position(3)) ndlabel("No Obs.")
+		graph export "D:\plataforma_migra\maps\map_chile.png", as(png) name("Graph")
+		
+	
+
+		
+		
