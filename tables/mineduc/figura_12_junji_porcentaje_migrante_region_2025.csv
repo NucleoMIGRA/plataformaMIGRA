@@ -1,0 +1,17 @@
+cod_region,region,region_display,total_children,migrant_children,migrant_share,region_factor
+15,Arica y Parinacota,Arica y Parinacota,3000,194,0.06466666666666666,Arica y Parinacota
+1,Tarapacá,Tarapacá,2587,206,0.07962891379976807,Tarapacá
+2,Antofagasta,Antofagasta,3580,315,0.08798882681564246,Antofagasta
+3,Atacama,Atacama,2002,135,0.06743256743256744,Atacama
+4,Coquimbo,Coquimbo,4725,151,0.031957671957671956,Coquimbo
+5,Valparaíso,Valparaíso,6938,180,0.025944076102623233,Valparaíso
+13,Metropolitana,Metropolitana,22275,837,0.037575757575757575,Metropolitana
+6,O'Higgins,O'Higgins,3670,137,0.03732970027247957,O'Higgins
+7,Maule,Maule,5968,149,0.024966487935656836,Maule
+16,Ñuble,Ñuble,1517,28,0.01845748187211602,Ñuble
+8,Biobío,Biobío,5923,104,0.0175586695931116,Biobío
+9,La Araucanía,La Araucanía,4877,30,0.006151322534344884,La Araucanía
+14,Los Ríos,Los Ríos,1750,7,0.004,Los Ríos
+10,Los Lagos,Los Lagos,4007,60,0.014973795857249813,Los Lagos
+11,Aysén,Aysén,1103,16,0.014505893019038985,Aysén
+12,Magallanes,Magallanes,2163,75,0.03467406380027739,Magallanes

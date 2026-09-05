@@ -1,0 +1,17 @@
+region,rraa_regular,rraa_irregular,total_migrantes,has_estimation,share_irregular,etiqueta,region_plot
+Antofagasta,48070,13571,61641,TRUE,0.22016190522541815,"13.571 (22,0%)",Antofagasta
+Arica y Parinacota,12348,5325,17673,TRUE,0.30130707859446615,"5.325 (30,1%)",Arica y Parinacota
+Atacama,12785,5120,17905,TRUE,0.2859536442334543,"5.120 (28,6%)",Atacama
+Aysén,1899,503,2402,TRUE,0.20940882597835137,"503 (20,9%)",Aysén
+Biobío,24698,13138,37836,TRUE,0.3472354371498044,"13.138 (34,7%)",Biobío
+Coquimbo,22157,11305,33462,TRUE,0.3378459147689917,"11.305 (33,8%)",Coquimbo
+Los Lagos,18224,9035,27259,TRUE,0.33145016324883525,"9.035 (33,1%)",Los Lagos
+Magallanes,6047,1136,7183,TRUE,0.15815119031045524,"1.136 (15,8%)",Magallanes
+Maule,30657,11095,41752,TRUE,0.2657357731366162,"11.095 (26,6%)",Maule
+Metropolitana,427571,144894,572465,TRUE,0.2531054300262898,"144.894 (25,3%)",Metropolitana
+O'Higgins,34536,11861,46397,TRUE,0.2556415285471043,"11.861 (25,6%)",O'Higgins
+Tarapacá,NA,NA,NA,FALSE,NA,NA,Tarapacá
+Valparaíso,NA,NA,NA,FALSE,NA,NA,Valparaíso
+Ñuble,NA,NA,NA,FALSE,NA,NA,Ñuble
+La Araucanía,NA,NA,NA,FALSE,NA,NA,La Araucanía
+Los Ríos,NA,NA,NA,FALSE,NA,NA,Los Ríos

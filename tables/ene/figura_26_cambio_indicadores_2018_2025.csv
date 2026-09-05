@@ -1,0 +1,33 @@
+indicator,year,migrant_status,share,year_label
+Ocupacion formal,2018,Chilenos,32.61061407439401,2018
+Ocupacion formal,2018,Migrantes,48.0257355241013,2018
+Ocupacion formal,2025,Chilenos,74.02283906457691,2025
+Ocupacion formal,2025,Migrantes,72.23408512869806,2025
+Cotizacion previsional,2018,Chilenos,82.71309351119127,2018
+Cotizacion previsional,2018,Migrantes,83.26134502925483,2018
+Cotizacion previsional,2025,Chilenos,87.97717620512442,2025
+Cotizacion previsional,2025,Migrantes,84.27147256070315,2025
+Cotizacion de salud,2018,Chilenos,83.47543121083118,2018
+Cotizacion de salud,2018,Migrantes,83.58801808737576,2018
+Cotizacion de salud,2025,Chilenos,89.70198627501827,2025
+Cotizacion de salud,2025,Migrantes,84.43805912309821,2025
+Seguro de desempleo,2018,Chilenos,76.75145714458623,2018
+Seguro de desempleo,2018,Migrantes,81.73273813320505,2018
+Seguro de desempleo,2025,Chilenos,77.58722977940829,2025
+Seguro de desempleo,2025,Migrantes,80.62032167071376,2025
+Vacaciones,2018,Chilenos,76.63450246865747,2018
+Vacaciones,2018,Migrantes,75.7690651577521,2018
+Vacaciones,2025,Chilenos,84.26723768609241,2025
+Vacaciones,2025,Migrantes,81.10070954466116,2025
+Dias pagados por enfermedad,2018,Chilenos,81.73527826550223,2018
+Dias pagados por enfermedad,2018,Migrantes,81.77580210653882,2018
+Dias pagados por enfermedad,2025,Chilenos,87.73302372328934,2025
+Dias pagados por enfermedad,2025,Migrantes,83.00748546252036,2025
+Permiso de maternidad,2018,Chilenos,76.24084826976929,2018
+Permiso de maternidad,2018,Migrantes,71.41288142742103,2018
+Permiso de maternidad,2025,Chilenos,82.30475453736243,2025
+Permiso de maternidad,2025,Migrantes,74.67534882639697,2025
+Guarderia o sala cuna,2018,Chilenos,36.03120108941873,2018
+Guarderia o sala cuna,2018,Migrantes,16.075835885282462,2018
+Guarderia o sala cuna,2025,Chilenos,44.276568870539975,2025
+Guarderia o sala cuna,2025,Migrantes,31.004491708910095,2025
