@@ -508,7 +508,11 @@ run_casen <- function(build = c("all", "panel", "figures"), force_rebuild = FALS
           (ing_act_prin * inflacion) / (4 * horas_trabajo),
           NA_real_
         ),
-        grupo = if_else(extranjero == 1, "Migrantes", "Chilenos")
+        grupo = case_when(
+          extranjero == 1 ~ "Migrantes",
+          extranjero == 0 ~ "Chilenos",
+          TRUE ~ NA_character_
+        )
       )
 
     public_name <- function(name_base) {
@@ -652,7 +656,11 @@ run_casen <- function(build = c("all", "panel", "figures"), force_rebuild = FALS
     f3 <- panel |>
       filter(!is.na(mujer), !is.na(extranjero), !is.na(hacinamiento), !hacinamiento %in% c(4, 9, -88), hacinamiento %in% c(1, 2, 3)) |>
       mutate(
-        grupo = if_else(extranjero == 1, "Migrantes", "Chilenos"),
+        grupo = case_when(
+          extranjero == 1 ~ "Migrantes",
+          extranjero == 0 ~ "Chilenos",
+          TRUE ~ NA_character_
+        ),
         hac_key = case_when(
           hacinamiento == 1 ~ "sin_hacinamiento",
           hacinamiento == 2 ~ "hacinamiento_medio",
@@ -991,15 +999,15 @@ run_casen <- function(build = c("all", "panel", "figures"), force_rebuild = FALS
 
     f_update_1 <- bind_rows(
       panel_2024 |>
-        filter(edad >= 25, edad <= 50) |>
+        filter(!is.na(grupo), edad >= 25, edad <= 50) |>
         group_by(grupo) |>
         summarise(indicador = "Educación superior, 25-50 años", valor = weighted.mean(educ_sup == 1, expr, na.rm = TRUE), .groups = "drop"),
       panel_2024 |>
-        filter(edad >= 18, edad <= 64) |>
+        filter(!is.na(grupo), edad >= 18, edad <= 64) |>
         group_by(grupo) |>
         summarise(indicador = "Participación laboral, 18-64 años", valor = weighted.mean(lfp == 1, expr, na.rm = TRUE), .groups = "drop"),
       panel_2024 |>
-        filter(edad >= 18, edad <= 64, lfp == 1, unemployed == 0) |>
+        filter(!is.na(grupo), edad >= 18, edad <= 64, lfp == 1, unemployed == 0) |>
         group_by(grupo) |>
         summarise(indicador = "Contrato laboral entre ocupados, 18-64 años", valor = weighted.mean(contrato == 1, expr, na.rm = TRUE), .groups = "drop")
     ) |>
@@ -1017,12 +1025,15 @@ run_casen <- function(build = c("all", "panel", "figures"), force_rebuild = FALS
 
     f_update_2 <- bind_rows(
       panel_2024 |>
+        filter(!is.na(grupo)) |>
         group_by(grupo) |>
         summarise(indicador = "Pobreza multidimensional", valor = weighted.mean(pobreza_multi == 1, expr, na.rm = TRUE), .groups = "drop"),
       panel_2024 |>
+        filter(!is.na(grupo)) |>
         group_by(grupo) |>
         summarise(indicador = "Hacinamiento alto", valor = weighted.mean(hacinamiento_alto == 1, expr, na.rm = TRUE), .groups = "drop"),
       panel_2024 |>
+        filter(!is.na(grupo)) |>
         group_by(grupo) |>
         summarise(indicador = "Residencia rural", valor = weighted.mean(zona_rural == 1, expr, na.rm = TRUE), .groups = "drop")
     ) |>
@@ -1031,7 +1042,7 @@ run_casen <- function(build = c("all", "panel", "figures"), force_rebuild = FALS
 
     p_update_2 <- ggplot(f_update_2, aes(indicador, valor, fill = grupo)) +
       geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-      scale_fill_manual(values = c("Migrantes" = color_migrantes, "Chilenos" = "#c9473a")) +
+      scale_fill_manual(values = c("Migrantes" = color_migrantes, "Chilenos" = color_chilenos)) +
       scale_y_continuous(labels = format_percent, expand = expansion(mult = c(0, 0.06))) +
       labs(x = NULL, y = "Porcentaje") +
       theme_migra() +
@@ -1052,15 +1063,24 @@ run_casen <- function(build = c("all", "panel", "figures"), force_rebuild = FALS
       arrange(match(region_code, region_order_norte_sur))
     write_fig_table(f_update_3, tbl_update, "fig_03_regiones_migrantes_2024")
 
+    region_levels_update <- wrap_label(
+      unname(region_labels[as.character(region_order_norte_sur)]),
+      width = 24
+    )
     p_update_3 <- f_update_3 |>
-      mutate(region_plot = factor(wrap_label(region_nombre, width = 24), levels = rev(region_labels_plot[as.character(region_order_norte_sur)]))) |>
+      mutate(
+        region_plot = wrap_label(region_nombre, width = 24),
+        region_plot = factor(region_plot, levels = rev(region_levels_update))
+      ) |>
       ggplot(aes(migrantes, region_plot, fill = share_migrantes)) +
       geom_col() +
       geom_text(aes(label = paste0(format_number(migrantes), " (", format_percent(100 * share_migrantes), ")")), hjust = -0.05, size = 3.1, colour = "#32475b") +
       scale_fill_gradient(low = "#cfe3f4", high = color_chilenos, labels = scales::label_percent(accuracy = 0.1, decimal.mark = ","), name = "% migrante") +
       scale_x_continuous(labels = format_number, expand = expansion(mult = c(0, 0.18))) +
       labs(x = "Personas", y = NULL) +
-      theme_migra()
+      theme_migra() +
+      theme(legend.position = "right") +
+      guides(fill = guide_colorbar(direction = "vertical", barheight = grid::unit(45, "mm")))
     save_plot(p_update_3, "fig_03_regiones_migrantes_2024", "current", w = 11.5, h = 7.2)
 
     f_update_4 <- panel_2024 |>

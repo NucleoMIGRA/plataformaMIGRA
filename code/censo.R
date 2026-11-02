@@ -645,7 +645,7 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       group_by(year) %>%
       mutate(share = n / sum(n), value = if_else(sex == "Hombres", -share, share)) %>%
       ungroup() %>%
-      mutate(age_band = factor(age_band_labels[as.character(age5)], levels = rev(age_band_levels), ordered = TRUE))
+      mutate(age_band = factor(age_band_labels[as.character(age5)], levels = age_band_levels, ordered = TRUE))
 
     p <- ggplot(x, aes(x = value, y = age_band, fill = sex)) +
       geom_col(width = 0.88) +
@@ -734,40 +734,6 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
         mutate(country = factor(country, levels = rev(country)))
     }
 
-    cmp_region <- merge(
-      expand.grid(region = region_lookup_tbl$region, year = c(2017L, 2024L)),
-      cmp$region %>% select(-any_of('region_label')),
-      by = c('region', 'year'),
-      all.x = TRUE
-    ) %>%
-      as_tibble() %>%
-      left_join(region_lookup_tbl, by = 'region') %>%
-      mutate(
-        total_personas = dplyr::coalesce(total_personas, 0),
-        migrantes = dplyr::coalesce(migrantes, 0),
-        share_migrantes = dplyr::coalesce(share_migrantes, 0),
-        region_plot = factor(wrap_label(region_label, width = 18), levels = rev(region_plot_levels))
-      )
-    p1 <- ggplot(cmp_region, aes(x = migrantes, y = region_plot, fill = factor(year))) +
-      geom_col(position = position_dodge(width = 0.75), width = 0.68) +
-      scale_fill_manual(values = c(`2017` = censo_palette$grey, `2024` = censo_palette$migrant)) +
-      scale_x_continuous(labels = num_fmt) +
-      scale_y_discrete(limits = rev(region_plot_levels), drop = FALSE) +
-      labs(title = "Figura 1. Población nacida fuera de Chile por región", subtitle = "Comparación entre Censo 2017 y Censo 2024", x = "Personas", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
-      base_theme()
-    save_plot(p1, file.path(fig_compare, "figura_01_region_migrantes_2017_2024.png"), 10, 7)
-    write_csv(cmp_region, file.path(tab_compare, "figura_01_region_migrantes_2017_2024.csv"))
-
-    p2 <- ggplot(cmp_region, aes(x = share_migrantes, y = region_plot, fill = factor(year))) +
-      geom_col(position = position_dodge(width = 0.75), width = 0.68) +
-      scale_fill_manual(values = c(`2017` = censo_palette$grey, `2024` = censo_palette$accent)) +
-      scale_x_continuous(labels = pct_fmt) +
-      scale_y_discrete(limits = rev(region_plot_levels), drop = FALSE) +
-      labs(title = "Figura 2. Participación regional de población nacida fuera de Chile", subtitle = "Porcentaje de la población regional", x = "Porcentaje", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
-      base_theme()
-    save_plot(p2, file.path(fig_compare, "figura_02_share_migrantes_region_2017_2024.png"), 10, 7)
-    write_csv(cmp_region %>% select(year, region, region_label, share_migrantes), file.path(tab_compare, "figura_02_share_migrantes_region_2017_2024.csv"))
-
     school_plot <- cmp$school %>% mutate(year = factor(year), migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile")))
     p3 <- ggplot(school_plot, aes(x = year, y = promedio_escolaridad, fill = migrant_status)) +
       geom_col(position = position_dodge(width = 0.7), width = 0.6) +
@@ -775,8 +741,8 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_fill_manual(values = c("Nacidos en Chile" = censo_palette$local, "Nacidos fuera de Chile" = censo_palette$migrant)) +
       labs(title = "Figura 3. Años promedio de escolaridad en población de 25 a 50 años", subtitle = "Comparación por lugar de nacimiento", x = NULL, y = "Años", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p3, file.path(fig_compare, "figura_12_escolaridad_promedio_25_50.png"), 8.8, 6)
-    write_csv(cmp$school, file.path(tab_compare, "figura_12_escolaridad_promedio_25_50.csv"))
+    save_plot(p3, file.path(fig_compare, "figura_09_escolaridad_promedio_25_50.png"), 8.8, 6)
+    write_csv(cmp$school, file.path(tab_compare, "figura_09_escolaridad_promedio_25_50.csv"))
 
     higher_plot <- cmp$higher %>% mutate(year = factor(year), migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile")))
     p4 <- ggplot(higher_plot, aes(x = year, y = prop_superior, fill = migrant_status)) +
@@ -786,8 +752,8 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) +
       labs(title = "Figura 4. Personas de 25 a 50 años con educación superior", subtitle = "Comparación por lugar de nacimiento", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p4, file.path(fig_compare, "figura_13_educacion_superior_25_50.png"), 8.8, 6)
-    write_csv(cmp$higher, file.path(tab_compare, "figura_13_educacion_superior_25_50.csv"))
+    save_plot(p4, file.path(fig_compare, "figura_10_educacion_superior_25_50.png"), 8.8, 6)
+    write_csv(cmp$higher, file.path(tab_compare, "figura_10_educacion_superior_25_50.csv"))
 
     hh_plot <- cmp$household %>% mutate(year = factor(year))
     p5 <- ggplot(hh_plot, aes(x = year, y = prop_hogar_con_migrante)) +
@@ -796,8 +762,8 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) +
       labs(title = "Figura 5. Hogares con al menos una persona nacida fuera de Chile", subtitle = "Comparación entre 2017 y 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p5, file.path(fig_compare, "figura_16_hogares_con_migrantes.png"), 7, 5.5)
-    write_csv(cmp$household, file.path(tab_compare, "figura_16_hogares_con_migrantes.csv"))
+    save_plot(p5, file.path(fig_compare, "figura_13_hogares_con_migrantes.png"), 7, 5.5)
+    write_csv(cmp$household, file.path(tab_compare, "figura_13_hogares_con_migrantes.csv"))
 
     p6 <- ggplot(hh_plot, aes(x = year, y = prop_jefatura_migrante)) +
       geom_col(width = 0.56, fill = censo_palette$accent) +
@@ -805,8 +771,8 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) +
       labs(title = "Figura 6. Hogares con jefatura nacida fuera de Chile", subtitle = "Comparación entre 2017 y 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p6, file.path(fig_compare, "figura_17_jefatura_hogar_migrante.png"), 7, 5.5)
-    write_csv(cmp$household, file.path(tab_compare, "figura_17_jefatura_hogar_migrante.csv"))
+    save_plot(p6, file.path(fig_compare, "figura_14_jefatura_hogar_migrante.png"), 7, 5.5)
+    write_csv(cmp$household, file.path(tab_compare, "figura_14_jefatura_hogar_migrante.csv"))
 
     child_plot <- cmp$children %>% mutate(year = factor(year), migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile")))
     p7 <- ggplot(child_plot, aes(x = year, y = hijos_promedio, fill = migrant_status)) +
@@ -815,30 +781,8 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_fill_manual(values = c("Nacidos en Chile" = censo_palette$local, "Nacidos fuera de Chile" = censo_palette$migrant)) +
       labs(title = "Figura 7. Número promedio de hijos nacidos vivos en mujeres de 18 a 50 años", subtitle = "Comparación por lugar de nacimiento", x = NULL, y = "Promedio de hijos", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p7, file.path(fig_compare, "figura_18_hijos_promedio_mujeres_18_50.png"), 8.8, 6)
-    write_csv(cmp$children, file.path(tab_compare, "figura_18_hijos_promedio_mujeres_18_50.csv"))
-
-    cmp_country_plot <- cmp$country %>%
-      filter(!is.na(country_group)) %>%
-      mutate(country_group = clean_country_label(as.character(country_group))) %>%
-      group_by(year, country_group) %>%
-      summarise(n = sum(n), .groups = 'drop')
-    country_order_cmp <- cmp_country_plot %>%
-      group_by(country_group) %>%
-      summarise(total = sum(n), .groups = 'drop') %>%
-      mutate(is_other = is_residual_country(country_group)) %>%
-      arrange(is_other, desc(total)) %>%
-      pull(country_group)
-    cmp_country_plot <- cmp_country_plot %>%
-      mutate(country_group = factor(country_group, levels = rev(country_order_cmp)))
-    p8 <- ggplot(cmp_country_plot, aes(x = n, y = country_group, fill = factor(year))) +
-      geom_col(position = position_dodge(width = 0.75), width = 0.68) +
-      scale_fill_manual(values = c(`2017` = censo_palette$grey, `2024` = censo_palette$migrant)) +
-      scale_x_continuous(labels = num_fmt) +
-      labs(title = "Figura 8. Principales países de nacimiento de la población migrante", subtitle = "Comparación entre 2017 y 2024", x = "Personas", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
-      base_theme()
-    save_plot(p8, file.path(fig_compare, "figura_21_principales_paises_nacimiento.png"), 10, 6.8)
-    write_csv(cmp_country_plot %>% arrange(year, desc(n)), file.path(tab_compare, "figura_21_principales_paises_nacimiento.csv"))
+    save_plot(p7, file.path(fig_compare, "figura_15_hijos_promedio_mujeres_18_50.png"), 8.8, 6)
+    write_csv(cmp$children, file.path(tab_compare, "figura_15_hijos_promedio_mujeres_18_50.csv"))
 
     area_plot <- cmp$area %>% mutate(year = factor(year), area_label = factor(area_label, levels = c("Urbano", "Rural")), migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile")))
     p9 <- ggplot(area_plot, aes(x = year, y = share, fill = area_label)) +
@@ -849,8 +793,8 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_y_continuous(labels = pct_fmt) +
       labs(title = "Figura 9. Distribución urbano-rural por lugar de nacimiento", subtitle = "Comparación entre 2017 y 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p9, file.path(fig_compare, "figura_20_urbano_rural_2017_2024.png"), 9.5, 5.8)
-    write_csv(cmp$area, file.path(tab_compare, "figura_20_urbano_rural_2017_2024.csv"))
+    save_plot(p9, file.path(fig_compare, "figura_17_urbano_rural_2017_2024.png"), 9.5, 5.8)
+    write_csv(cmp$area, file.path(tab_compare, "figura_17_urbano_rural_2017_2024.csv"))
 
     sex_cmp <- cmp$sex %>% mutate(year = factor(year))
     p10 <- ggplot(sex_cmp, aes(x = year, y = share, fill = sex)) +
@@ -860,8 +804,8 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_y_continuous(labels = pct_fmt) +
       labs(title = "Figura 10. Composición por sexo de la población migrante", subtitle = "Comparación entre 2017 y 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p10, file.path(fig_compare, "figura_10_sexo_migrantes_2017_2024.png"), 7.5, 5.5)
-    write_csv(cmp$sex, file.path(tab_compare, "figura_10_sexo_migrantes_2017_2024.csv"))
+    save_plot(p10, file.path(fig_compare, "figura_07_sexo_migrantes_2017_2024.png"), 7.5, 5.5)
+    write_csv(cmp$sex, file.path(tab_compare, "figura_07_sexo_migrantes_2017_2024.csv"))
 
     age_cmp <- cmp$age_group %>% mutate(year = factor(year), age_group = factor(age_group, levels = c("0 a 14", "15 a 29", "30 a 44", "45 a 64", "65 y más")))
     p11 <- ggplot(age_cmp, aes(x = year, y = share, fill = age_group)) +
@@ -871,69 +815,50 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       scale_y_continuous(labels = pct_fmt) +
       labs(title = "Figura 11. Estructura etaria agregada de la población migrante", subtitle = "Comparación entre 2017 y 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
       base_theme()
-    save_plot(p11, file.path(fig_compare, "figura_11_estructura_etaria_migrante_2017_2024.png"), 8.5, 5.8)
-    write_csv(cmp$age_group, file.path(tab_compare, "figura_11_estructura_etaria_migrante_2017_2024.csv"))
-
-    cmp_region_change <- cmp_region %>%
-      select(year, region, region_label, share_migrantes) %>%
-      arrange(match(region, region_lookup_tbl$region)) %>%
-      mutate(region_label = as.character(region_label)) %>%
-      tidyr::pivot_wider(names_from = year, values_from = share_migrantes, names_prefix = "share_") %>%
-      mutate(
-        change_pp = 100 * (`share_2024` - `share_2017`),
-        region_plot = factor(wrap_label(region_label, width = 18), levels = rev(region_plot_levels))
-      )
-    p12 <- ggplot(cmp_region_change, aes(y = region_plot)) +
-      geom_segment(aes(x = `share_2017`, xend = `share_2024`, yend = region_plot), colour = "#B9C2CC", linewidth = 1.1) +
-      geom_point(aes(x = `share_2017`), colour = censo_palette$grey, size = 2.4) +
-      geom_point(aes(x = `share_2024`), colour = censo_palette$accent, size = 2.8) +
-      scale_x_continuous(labels = pct_fmt) +
-      labs(title = "Figura 12. Cambio en la participación migrante por región", subtitle = "Comparación entre Censo 2017 y Censo 2024, ordenada de norte a sur", x = "Porcentaje de la población regional", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo.") +
-      base_theme()
-    save_plot(p12, file.path(fig_compare, "figura_03_cambio_share_region_2017_2024.png"), 10, 7)
-    write_csv(cmp_region_change, file.path(tab_compare, "figura_03_cambio_share_region_2017_2024.csv"))
+    save_plot(p11, file.path(fig_compare, "figura_08_estructura_etaria_migrante_2017_2024.png"), 8.5, 5.8)
+    write_csv(cmp$age_group, file.path(tab_compare, "figura_08_estructura_etaria_migrante_2017_2024.csv"))
 
     s17_region <- region_lookup_tbl %>%
       left_join(s17$region %>% select(-any_of('region_label')), by = 'region') %>%
       mutate(migrantes = dplyr::coalesce(migrantes, 0), region_plot = factor(wrap_label(region_label, width = 18), levels = rev(region_plot_levels)))
 
-    plot_pyramid(s17$pyramid, "Pirámide poblacional de la población migrante", "Censo 2017", file.path(fig_2017, "figura_24_piramide_migrante_2017.png"))
-    write_csv(s17$pyramid, file.path(tab_2017, "figura_24_piramide_migrante_2017.csv"))
+    plot_pyramid(s17$pyramid, "Pirámide poblacional de la población migrante", "Censo 2017", file.path(fig_2017, "figura_20_piramide_migrante_2017.png"))
+    write_csv(s17$pyramid, file.path(tab_2017, "figura_20_piramide_migrante_2017.csv"))
 
     s17_country_plot <- build_country_ranking(s17$country, top_n = 9L)
     p17_2 <- ggplot(s17_country_plot, aes(x = n, y = country)) +
       geom_col(width = 0.72, show.legend = FALSE, fill = censo_palette$migrant) + scale_x_continuous(labels = num_fmt) +
       labs(title = "Figura 2. Principales países de nacimiento", subtitle = "Población nacida fuera de Chile, Censo 2017", x = "Personas", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2017.") + base_theme()
-    save_plot(p17_2, file.path(fig_2017, "figura_22_principales_paises_2017.png"), 9.8, 6.8)
-    write_csv(s17_country_plot, file.path(tab_2017, "figura_22_principales_paises_2017.csv"))
+    save_plot(p17_2, file.path(fig_2017, "figura_18_principales_paises_2017.png"), 9.8, 6.8)
+    write_csv(s17_country_plot, file.path(tab_2017, "figura_18_principales_paises_2017.csv"))
 
     p17_3 <- ggplot(s17$child_chile %>% mutate(migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile"))), aes(x = migrant_status, y = prop_hijo_chile, fill = migrant_status)) +
       geom_col(width = 0.58) + geom_text(aes(label = pct_fmt(prop_hijo_chile)), vjust = -0.35, size = 3.2, color = "#425466") +
       scale_fill_manual(values = c("Nacidos en Chile" = censo_palette$local, "Nacidos fuera de Chile" = censo_palette$migrant)) + scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) +
       labs(title = "Figura 3. Mujeres de 18 a 50 años con al menos un hijo nacido en Chile", subtitle = "Censo 2017", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2017.") + base_theme()
-    save_plot(p17_3, file.path(fig_2017, "figura_19_hijo_nacido_en_chile_2017.png"), 8.2, 5.8)
-    write_csv(s17$child_chile, file.path(tab_2017, "figura_19_hijo_nacido_en_chile_2017.csv"))
+    save_plot(p17_3, file.path(fig_2017, "figura_16_hijo_nacido_en_chile_2017.png"), 8.2, 5.8)
+    write_csv(s17$child_chile, file.path(tab_2017, "figura_16_hijo_nacido_en_chile_2017.csv"))
 
     p17_4 <- ggplot(s17$school %>% mutate(migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile"))), aes(x = migrant_status, y = promedio_escolaridad, fill = migrant_status)) +
       geom_col(width = 0.58) + geom_text(aes(label = number(promedio_escolaridad, accuracy = 0.1, decimal.mark = ",")), vjust = -0.35, size = 3.2, color = "#425466") +
       scale_fill_manual(values = c("Nacidos en Chile" = censo_palette$local, "Nacidos fuera de Chile" = censo_palette$migrant)) +
       labs(title = "Figura 4. Años promedio de escolaridad en población de 25 a 50 años", subtitle = "Censo 2017", x = NULL, y = "Años", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2017.") + base_theme()
-    save_plot(p17_4, file.path(fig_2017, "figura_25_escolaridad_25_50_2017.png"), 8.2, 5.8)
-    write_csv(s17$school, file.path(tab_2017, "figura_25_escolaridad_25_50_2017.csv"))
+    save_plot(p17_4, file.path(fig_2017, "figura_21_escolaridad_25_50_2017.png"), 8.2, 5.8)
+    write_csv(s17$school, file.path(tab_2017, "figura_21_escolaridad_25_50_2017.csv"))
 
     p17_5 <- ggplot(s17$higher %>% mutate(migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile"))), aes(x = migrant_status, y = prop_superior, fill = migrant_status)) +
       geom_col(width = 0.58) + geom_text(aes(label = pct_fmt(prop_superior)), vjust = -0.35, size = 3.2, color = "#425466") +
       scale_fill_manual(values = c("Nacidos en Chile" = censo_palette$local, "Nacidos fuera de Chile" = censo_palette$migrant)) + scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) +
       labs(title = "Figura 5. Población de 25 a 50 años con educación superior", subtitle = "Censo 2017", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2017.") + base_theme()
-    save_plot(p17_5, file.path(fig_2017, "figura_26_educacion_superior_2017.png"), 8.2, 5.8)
-    write_csv(s17$higher, file.path(tab_2017, "figura_26_educacion_superior_2017.csv"))
+    save_plot(p17_5, file.path(fig_2017, "figura_22_educacion_superior_2017.png"), 8.2, 5.8)
+    write_csv(s17$higher, file.path(tab_2017, "figura_22_educacion_superior_2017.csv"))
 
     s24_region <- region_lookup_tbl %>%
       left_join(s24$region %>% select(-any_of('region_label')), by = 'region') %>%
       mutate(migrantes = dplyr::coalesce(migrantes, 0), region_plot = factor(wrap_label(region_label, width = 18), levels = rev(region_plot_levels)))
     p24_1 <- ggplot(s24_region, aes(x = migrantes, y = region_plot)) + geom_col(fill = censo_palette$migrant, width = 0.72) + scale_x_continuous(labels = num_fmt) + scale_y_discrete(limits = rev(region_plot_levels), drop = FALSE) + labs(title = "Figura 1. Población nacida fuera de Chile por región", subtitle = "Censo 2024", x = "Personas", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_1, file.path(fig_2024, "figura_04_region_migrantes_2024.png"), 10, 7)
-    write_csv(s24_region, file.path(tab_2024, "figura_04_region_migrantes_2024.csv"))
+    save_plot(p24_1, file.path(fig_2024, "figura_01_region_migrantes_2024.png"), 10, 7)
+    write_csv(s24_region, file.path(tab_2024, "figura_01_region_migrantes_2024.csv"))
 
     comuna_plot <- s24$comuna %>%
       filter(!is.na(comuna_label)) %>%
@@ -944,16 +869,16 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       slice_head(n = 15) %>%
       mutate(label_txt = paste0(comuna_label, ' (', region_short, ')'), label = factor(label_txt, levels = rev(label_txt)))
     p24_2 <- ggplot(comuna_plot, aes(x = migrantes, y = label)) + geom_col(fill = censo_palette$migrant, width = 0.72) + scale_x_continuous(labels = num_fmt) + labs(title = "Figura 2. Comunas con mayor población nacida fuera de Chile", subtitle = "Censo 2024", x = "Personas", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_2, file.path(fig_2024, "figura_05_top_comunas_2024.png"), 10, 7)
-    write_csv(comuna_plot %>% select(region, comuna, migrantes, year, comuna_label, region_label, label_txt), file.path(tab_2024, "figura_05_top_comunas_2024.csv"))
+    save_plot(p24_2, file.path(fig_2024, "figura_02_top_comunas_2024.png"), 10, 7)
+    write_csv(comuna_plot %>% select(region, comuna, migrantes, year, comuna_label, region_label, label_txt), file.path(tab_2024, "figura_02_top_comunas_2024.csv"))
 
-    plot_pyramid(s24$pyramid, "Pirámide poblacional de la población migrante", "Censo 2024", file.path(fig_2024, "figura_06_piramide_migrante_2024.png"))
-    write_csv(s24$pyramid, file.path(tab_2024, "figura_06_piramide_migrante_2024.csv"))
+    plot_pyramid(s24$pyramid, "Pirámide poblacional de la población migrante", "Censo 2024", file.path(fig_2024, "figura_03_piramide_migrante_2024.png"))
+    write_csv(s24$pyramid, file.path(tab_2024, "figura_03_piramide_migrante_2024.csv"))
 
     s24_country_plot <- build_country_ranking(s24$country, top_n = 9L)
     p24_4 <- ggplot(s24_country_plot, aes(x = n, y = country)) + geom_col(fill = censo_palette$migrant, width = 0.72) + scale_x_continuous(labels = num_fmt) + labs(title = "Figura 4. Principales países de nacimiento", subtitle = "Población nacida fuera de Chile, Censo 2024", x = "Personas", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_4, file.path(fig_2024, "figura_23_principales_paises_2024.png"), 9.8, 6.8)
-    write_csv(s24_country_plot, file.path(tab_2024, "figura_23_principales_paises_2024.csv"))
+    save_plot(p24_4, file.path(fig_2024, "figura_19_principales_paises_2024.png"), 9.8, 6.8)
+    write_csv(s24_country_plot, file.path(tab_2024, "figura_19_principales_paises_2024.csv"))
 
     arrival_plot <- s24$arrival %>%
       mutate(
@@ -974,24 +899,24 @@ run_censo <- function(build = c("all", "prepare", "figures"), force_rebuild = FA
       ) %>%
       arrange(order_id)
     p24_5 <- ggplot(arrival_plot %>% mutate(label = factor(label, levels = rev(label))), aes(x = n, y = label)) + geom_col(fill = censo_palette$accent, width = 0.72) + scale_x_continuous(labels = num_fmt) + labs(title = "Figura 5. Periodo de llegada a Chile", subtitle = "Población nacida fuera de Chile, Censo 2024, orden cronológico", x = "Personas", y = NULL, caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_5, file.path(fig_2024, "figura_09_periodo_llegada_2024.png"), 10, 6.5)
-    write_csv(arrival_plot, file.path(tab_2024, "figura_09_periodo_llegada_2024.csv"))
+    save_plot(p24_5, file.path(fig_2024, "figura_06_periodo_llegada_2024.png"), 10, 6.5)
+    write_csv(arrival_plot, file.path(tab_2024, "figura_06_periodo_llegada_2024.csv"))
 
     p24_6 <- ggplot(s24$sex %>% mutate(sex = factor(sex, levels = c("Hombres", "Mujeres"))), aes(x = sex, y = share, fill = sex)) + geom_col(width = 0.58) + geom_text(aes(label = pct_fmt(share)), vjust = -0.35, size = 3.2, color = "#425466") + scale_fill_manual(values = c("Hombres" = censo_palette$migrant, "Mujeres" = censo_palette$accent)) + scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) + labs(title = "Figura 6. Composición por sexo de la población migrante", subtitle = "Censo 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_6, file.path(fig_2024, "figura_07_sexo_migrantes_2024.png"), 7.2, 5.6)
-    write_csv(s24$sex, file.path(tab_2024, "figura_07_sexo_migrantes_2024.csv"))
+    save_plot(p24_6, file.path(fig_2024, "figura_04_sexo_migrantes_2024.png"), 7.2, 5.6)
+    write_csv(s24$sex, file.path(tab_2024, "figura_04_sexo_migrantes_2024.csv"))
 
     p24_7 <- ggplot(s24$age_group %>% mutate(age_group = factor(age_group, levels = c("0 a 14", "15 a 29", "30 a 44", "45 a 64", "65 y más"))), aes(x = age_group, y = share, fill = age_group)) + geom_col(width = 0.62, show.legend = FALSE) + geom_text(aes(label = pct_fmt(share)), vjust = -0.35, size = 3.0, color = "#425466") + scale_fill_manual(values = c("0 a 14" = censo_palette$olive, "15 a 29" = censo_palette$teal, "30 a 44" = censo_palette$migrant, "45 a 64" = censo_palette$local, "65 y más" = censo_palette$accent)) + scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) + labs(title = "Figura 7. Estructura etaria agregada de la población migrante", subtitle = "Censo 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_7, file.path(fig_2024, "figura_08_estructura_etaria_migrante_2024.png"), 8.8, 5.8)
-    write_csv(s24$age_group, file.path(tab_2024, "figura_08_estructura_etaria_migrante_2024.csv"))
+    save_plot(p24_7, file.path(fig_2024, "figura_05_estructura_etaria_migrante_2024.png"), 8.8, 5.8)
+    write_csv(s24$age_group, file.path(tab_2024, "figura_05_estructura_etaria_migrante_2024.csv"))
 
     p24_8 <- ggplot(s24$school %>% mutate(migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile"))), aes(x = migrant_status, y = promedio_escolaridad, fill = migrant_status)) + geom_col(width = 0.58) + geom_text(aes(label = number(promedio_escolaridad, accuracy = 0.1, decimal.mark = ",")), vjust = -0.35, size = 3.2, color = "#425466") + scale_fill_manual(values = c("Nacidos en Chile" = censo_palette$local, "Nacidos fuera de Chile" = censo_palette$migrant)) + labs(title = "Figura 8. Años promedio de escolaridad en población de 25 a 50 años", subtitle = "Censo 2024", x = NULL, y = "Años", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_8, file.path(fig_2024, "figura_14_escolaridad_25_50_2024.png"), 8.2, 5.8)
-    write_csv(s24$school, file.path(tab_2024, "figura_14_escolaridad_25_50_2024.csv"))
+    save_plot(p24_8, file.path(fig_2024, "figura_11_escolaridad_25_50_2024.png"), 8.2, 5.8)
+    write_csv(s24$school, file.path(tab_2024, "figura_11_escolaridad_25_50_2024.csv"))
 
     p24_9 <- ggplot(s24$higher %>% mutate(migrant_status = factor(migrant_status, levels = c("Nacidos en Chile", "Nacidos fuera de Chile"))), aes(x = migrant_status, y = prop_superior, fill = migrant_status)) + geom_col(width = 0.58) + geom_text(aes(label = pct_fmt(prop_superior)), vjust = -0.35, size = 3.2, color = "#425466") + scale_fill_manual(values = c("Nacidos en Chile" = censo_palette$local, "Nacidos fuera de Chile" = censo_palette$migrant)) + scale_y_continuous(labels = pct_fmt, expand = expansion(mult = c(0, 0.08))) + labs(title = "Figura 9. Población de 25 a 50 años con educación superior", subtitle = "Censo 2024", x = NULL, y = "Porcentaje", caption = "Fuente: Elaboración propia con microdatos oficiales del Censo 2024.") + base_theme()
-    save_plot(p24_9, file.path(fig_2024, "figura_15_educacion_superior_2024.png"), 8.2, 5.8)
-    write_csv(s24$higher, file.path(tab_2024, "figura_15_educacion_superior_2024.csv"))
+    save_plot(p24_9, file.path(fig_2024, "figura_12_educacion_superior_2024.png"), 8.2, 5.8)
+    write_csv(s24$higher, file.path(tab_2024, "figura_12_educacion_superior_2024.csv"))
   }
 
   if (build %in% c("all", "prepare")) {
